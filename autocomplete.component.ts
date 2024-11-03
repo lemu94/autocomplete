@@ -20,20 +20,25 @@ type display<T> = {
  * Configuring fields for auto-completion.
  * @template T - Option data type.
  */
-type configField<T> = {
-    filter: keyof T,
-    show: keyof T,
-    get: keyof T,
-};
+type configField<T> = keyof T
 
 /**
  * Custom autocomplete component.
  * This component provides an abstraction layer to the base Angular Material Autocomplete component.
  *
  * @example
+ * class  Person {
+ * constructor(
+ * public  nom : string="",
+ * public adresse :  string ="",
+ * public job : string=""){}}
+ * 
+ * 
+ * liste_personn : Array<Person>=[{nom : 'ange', adresse : '2545 avenu lamber', job : 'developper' }]
+ * 
  * <app-autocomplete 
  *   [listeData]="liste_personn" 
- *   [configField]="{'show': 'nom', 'filter': 'nom', 'get': 'adresse'}"
+ *   [configField]="'non'"
  *   [label]="'liste des personnes'"
  *   (onChangeValue)="valeur($event)">
  * </app-autocomplete>
@@ -109,9 +114,9 @@ export class AutoCompleteComponent<T> implements OnInit {
         );
 
         this.myControlAuto.valueChanges.subscribe(value => {
-            if (this.listeData.some(option => option[this.configField.filter] === value)) {
-                const foundOption = this.listeData.find(option => option[this.configField.filter] === value)!;
-                this.changeValue({ option: foundOption, field: this.configField.show });
+            if (this.listeData.some(option => option[this.configField] === value)) {
+                const foundOption = this.listeData.find(option => option[this.configField] === value)!;
+                this.changeValue({ option: foundOption, field: this.configField });
             }
         });
     }
@@ -125,7 +130,7 @@ export class AutoCompleteComponent<T> implements OnInit {
         let filterValue="";
        if(typeof value === 'string')filterValue = value?.toLowerCase();
         return this.listeData.filter(option =>
-            (option[this.configField.show] as string)?.toLowerCase().includes(filterValue)
+            (option[this.configField] as string)?.toLowerCase().includes(filterValue)
         );
     }
 

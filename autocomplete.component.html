@@ -1,27 +1,30 @@
-    <mat-form-field class="example-full-width">
-      <mat-label>{{label}}</mat-label>
-      <input type="text"
-             placeholder=""
-             aria-label="Number"
-             matInput
-             [formControl]="myControlAuto"
-             (focus)="onFocusControlAuto()"
-             [matAutocomplete]="auto">
-             
-      <mat-icon matSuffix>search</mat-icon>
-      <mat-autocomplete 
-      autoActiveFirstOption 
-      #auto="matAutocomplete" 
-      (optionSelected)="changeValue($event.option.value)" 
-      [displayWith]="displayFn"
-      >
-        @for (option of filteredOptions | async; track option) {
-          <mat-option [value]="{'option' : option , 'field':configField.show}">
+<mat-form-field class="example-full-width">
+  <mat-label>{{label}}</mat-label>
+  <input type="text"
+         placeholder=""
+         aria-label="field of search"
+         aria-autocomplete="list"
+         aria-controls="autocomplete-options"
+         matInput
+         [formControl]="myControlAuto"
+         (focus)="onFocusControlAuto()"
+         [matAutocomplete]="auto">
+         
+  <mat-icon matSuffix>search</mat-icon>
+  <mat-autocomplete 
+  autoActiveFirstOption 
+  #auto="matAutocomplete" 
+  (optionSelected)="changeValue($event.option.value)" 
+  [displayWith]="displayFn"
+  id="autocomplete-options"
+  >
+    @for (option of filteredOptions | async; track option) {
+      <mat-option [value]="{'option' : option , 'field':configField}">
 
-            {{option[configField.show]}}
-        
-            </mat-option>
-        }
-      </mat-autocomplete>
+        {{option[configField]}}
+    
+        </mat-option>
+    }
+  </mat-autocomplete>
 
-    </mat-form-field>
+</mat-form-field>
