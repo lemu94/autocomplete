@@ -32,11 +32,20 @@ ng add @angular/material
 ```
 ```typescript
 import { AutoCompleteComponent } from './path/to/autocomplete.component';
+
+  class  Person {
+  constructor(
+  public name : string="",
+  public adresse :  string ="",
+  public job : string=""){}}
+  
+  
+  liste_personn : Array<Person>=[{name : 'ange', adresse : '2545 avenu lamber', job : 'developper' }]
 ```
 ```html
 <app-autocomplete
-[listData]="dataList"
-[configField]="{ filter: 'name', show: 'name', get: 'address' }"
+[listData]="liste_personn"
+[configField]="'name'"
 label="Search for a name"
 (onChangeValue)="onValueChange($event)">
 </app-autocomplete>
