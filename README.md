@@ -1,26 +1,23 @@
 # Angular Autocomplete Component
 
-🚀 Simplifier l'Utilisation du Composant AutoComplete d'Angular Material avec un Composant d'Autocomplétion Personnalisé 🌟
+🚀 Simplify the Use of Angular Material AutoComplete Component with a Custom Autocomplete Component 🌟 As an Angular developer, I have often encountered challenges when implementing components like Angular Material autocomplete. Although powerful, these components can become complex to use and adapt to specific needs.
 
-En tant que développeur Angular, j'ai souvent rencontré des défis lors de l'implémentation de composants comme l'autocomplétion de Material Angular. Bien que puissants, ces composants peuvent devenir complexes à utiliser et à adapter à des besoins spécifiques.
+To address these issues, I created an AutoCompleteComponent that provides a layer of abstraction, simplifying its use and increasing reusability.
 
-Pour répondre à ces problématiques, j'ai créé un AutoCompleteComponent qui apporte une couche d'abstraction, simplifiant ainsi son utilisation et renforçant la réutilisabilité.
+Here are some of the benefits of my component: Data Validation: Ensures that the data passed is a non-null object, leading to runtime errors.
 
-Voici quelques avantages de mon composant :
+Simplified Configuration: Allows easy management of display and filter properties via a configuration object.
 
-Validation des Données : Assure que les données passées sont des objets non nuls, évitant les erreurs à l'exécution.
+Event Handling: Emits encapsulated events, facilitating integration with the rest of the application.
 
-Configuration Simplifiée : Permet une gestion facile des propriétés d'affichage et de filtrage via un objet de configuration.
+Reusability: Designed in a generic way, it can adapt to different types of objects without rewriting any code.
 
-Gestion des Événements : Émet des événements encapsulés, facilitant l'intégration avec le reste de l'application.
+I am excited to share this breakthrough that I hope will help other developers navigate the Angular Material ecosystem more easily.
 
-Réutilisabilité : Conçu de manière générique, il peut s'adapter à différents types d'objets sans réécriture de code.
-
-Je suis ravi de partager cette avancée qui, je l'espère, aidera d'autres développeurs à naviguer plus aisément dans l'écosystème Angular Material.
-
-N'hésitez pas à partager vos retours ou à me poser des questions !
+Feel free to share your feedback or ask me questions!
 
 #Angular #TypeScript #WebDevelopment #OpenSource #Innovation
+
 ## Description
 
 This Angular component provides a generic autocomplete feature, allowing users to search and select options from a dynamic list. It uses Angular Material modules for optimal styling and interactivity.
