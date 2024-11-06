@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { debounceTime, distinctUntilChanged, EMPTY, map, Observable, startWith } from "rxjs";
 import { MatIconModule } from "@angular/material/icon";
 
+
+
 /**
  * Type representing an option to display in autocomplete.
  * @template T -Option data type
@@ -47,8 +49,34 @@ type configField<T> = keyof T
 
 @Component({
     selector: "app-autocomplete",
-    templateUrl: "./autocomplete.component.html",
-    styleUrls: ["./autocomplete.component.scss"],
+    template: `
+    <mat-form-field class="example-full-width">
+    <mat-label>{{label}}</mat-label>
+    <input type="text"
+           [required]="required"
+           placeholder=""
+           aria-label="field of search"
+           aria-autocomplete="list"
+           aria-controls="autocomplete-options"
+           matInput
+           [formControl]="myControlAuto"
+           [matAutocomplete]="auto">
+           
+    <mat-icon matSuffix>search</mat-icon>
+    <mat-autocomplete 
+    autoActiveFirstOption 
+    #auto="matAutocomplete" 
+    (optionSelected)="changeValue($event.option.value)" 
+    [displayWith]="displayFn"
+    id="autocomplete-options">
+    @for (option of filteredOptions | async; track option) {
+      <mat-option [value]="{'option' : option , 'field':field}">
+        {{option[field]}}
+      </mat-option>
+    }
+    </mat-autocomplete>
+
+  </mat-form-field>`,
     imports: [
         FormsModule,
         MatFormFieldModule,
@@ -62,7 +90,7 @@ type configField<T> = keyof T
 })
 export class AutoCompleteComponent<T> implements OnInit {
 
-    
+    @Input() required : boolean = false;
     /**
      * List of data to display in autocomplete.
      */
@@ -71,7 +99,7 @@ export class AutoCompleteComponent<T> implements OnInit {
     /**
      * Configuring fields for auto-completion.
      */
-    @Input({ required: true }) configField!: configField<T>;
+    @Input({ required: true }) field!: configField<T>;
 
     /**
      * Configuring label for input
@@ -114,9 +142,9 @@ export class AutoCompleteComponent<T> implements OnInit {
         );
 
         this.myControlAuto.valueChanges.subscribe(value => {
-            if (this.listeData.some(option => option[this.configField] === value)) {
-                const foundOption = this.listeData.find(option => option[this.configField] === value)!;
-                this.changeValue({ option: foundOption, field: this.configField });
+            if (this.listeData.some(option => option[this.field] === value)) {
+                const foundOption = this.listeData.find(option => option[this.field] === value)!;
+                this.changeValue({ option: foundOption, field: this.field });
             }
         });
     }
@@ -130,7 +158,7 @@ export class AutoCompleteComponent<T> implements OnInit {
         let filterValue="";
        if(typeof value === 'string')filterValue = value?.toLowerCase();
         return this.listeData.filter(option =>
-            (option[this.configField] as string)?.toLowerCase().includes(filterValue)
+            (option[this.field] as string)?.toLowerCase().includes(filterValue)
         );
     }
 
