@@ -43,23 +43,22 @@ import { AutoCompleteComponent } from './path/to/autocomplete.component';
   liste_personn : Array<Person>=[{name : 'ange', adresse : '2545 avenu lamber', job : 'developper' }]
 ```
 ```html
-<app-autocomplete
-[listData]="liste_personn"
-[configField]="'name'"
-label="Search for a name"
-(onChangeValue)="onValueChange($event)">
-</app-autocomplete>
+  <app-autocomplete 
+  [listeData]="liste_personn" 
+  [field]="'job'"
+  [required]="true"
+  [label]="'liste des personnes'"
+  (onChangeValue)="valeur($event)"
+  >
+  </app-autocomplete>
 ```
 ## Properties
 
 - **@Input() listData: Array<T>**
 List of data to display in the autocomplete (required).
 
-- **@Input() configField: configField<T>**
-Configuration of the fields for the autocomplete (required). Must contain:
-- `filter`: key to filter the options.
-- `show`: key to display the options.
-- `get`: key to retrieve the options.
+- **@Input() field: configField<T>**
+key to display the options
 
 - **@Input() label: string**
 Label for the input field (required).
