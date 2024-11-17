@@ -57,7 +57,7 @@ import { AutoCompleteComponent } from './path/to/autocomplete.component';
 - **@Input() listData: Array<T>**
 List of data to display in the autocomplete (required).
 
-- **@Input() field: configField<T>**
+- **@Input() field: field<T>**
 key to display the options
 
 - **@Input() label: string**

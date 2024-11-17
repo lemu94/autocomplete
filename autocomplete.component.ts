@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors } from "@angular/forms";
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { debounceTime, distinctUntilChanged, EMPTY, map, Observable, startWith } from "rxjs";
-import { MatIconModule } from "@angular/material/icon";
+import { MatInput } from '@angular/material/input';
+import { MatError, MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { debounceTime, delay, distinctUntilChanged, EMPTY, map, Observable, of, startWith } from "rxjs";
+import { MatIcon, MatIconModule } from "@angular/material/icon";
 
 
 
@@ -22,7 +22,7 @@ type display<T> = {
  * Configuring fields for auto-completion.
  * @template T - Option data type.
  */
-type configField<T> = keyof T
+type field<T> = keyof T
 
 /**
  * Custom autocomplete component.
@@ -40,7 +40,7 @@ type configField<T> = keyof T
  * 
  * <app-autocomplete 
  *   [listeData]="liste_personn" 
- *   [configField]="'non'"
+ *   [field]="'non'"
  *   [label]="'liste des personnes'"
  *   (onChangeValue)="valeur($event)">
  * </app-autocomplete>
@@ -75,14 +75,28 @@ type configField<T> = keyof T
       </mat-option>
     }
     </mat-autocomplete>
+    @if(myControlAuto.touched)
+    {
+        <mat-error>
+        @if(myControlAuto.hasError("required"))
+        {
+            Field is Required
+        }
+        @if(myControlAuto.hasError("invalidSearch")){
+           Invalid Search
+        }
+      </mat-error>
+    }
 
   </mat-form-field>`,
     imports: [
         FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
+        MatFormField,
+        MatInput,
+        MatError,
+        MatLabel,
         MatAutocompleteModule,
-        MatIconModule,
+        MatIcon,
         ReactiveFormsModule,
         AsyncPipe,
     ],
@@ -99,7 +113,7 @@ export class AutoCompleteComponent<T> implements OnInit {
     /**
      * Configuring fields for auto-completion.
      */
-    @Input({ required: true }) field!: configField<T>;
+    @Input({ required: true }) field!: field<T>;
 
     /**
      * Configuring label for input
@@ -121,7 +135,7 @@ export class AutoCompleteComponent<T> implements OnInit {
     /**
      * Filtered options to display in autocomplete.
      */
-    filteredOptions: Observable<T[]> = EMPTY;
+    filteredOptions: Observable<T[]> = of([]);
 
     ngOnInit(): void {
         if (!Array.isArray(this.listeData) || this.listeData.some(item => typeof item !== 'object' || item === null)) {
@@ -129,6 +143,39 @@ export class AutoCompleteComponent<T> implements OnInit {
           }
         this.onFocusControlAuto();
     }
+
+
+    /**
+     * 
+    * @template T - The type of the options in the list.
+    * @param {Array<T>} liste - The list of options to validate against. Each option should be an object containing the field specified by `this.field`.
+    * @returns {AsyncValidatorFn} - An asynchronous validator function that returns an `Observable` or `Promise` resolving to `null` if the value is valid,
+    * or an object `{ invalidSearch: true }` if the value is invalid.
+     */
+    searchValidator(liste : Array<T> ): AsyncValidatorFn {
+        return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+          if(!control.dirty || control.value ===null) return of(null);
+    
+          return of(control.value).pipe(
+            delay(300), 
+            map(value => {
+              let isValid = false;
+              let foundOption : T;
+
+              const valueToCompare = value instanceof Object?value.option[this.field] : value;
+              isValid = this.listeData.some(option=>{
+                    return option[this.field] === valueToCompare;
+              })
+              foundOption = liste.find(option => option[this.field] === valueToCompare)!;
+              
+              this.changeValue({ option: foundOption, field: this.field });
+          
+              return isValid ? null : { invalidSearch: true };
+          
+            })
+          );
+        };
+      }
 
     /**
      * Initializes the filtering of options when the input field is focused.
@@ -141,12 +188,7 @@ export class AutoCompleteComponent<T> implements OnInit {
             map(value => this._filter(value as string)),
         );
 
-        this.myControlAuto.valueChanges.subscribe(value => {
-            if (this.listeData.some(option => option[this.field] === value)) {
-                const foundOption = this.listeData.find(option => option[this.field] === value)!;
-                this.changeValue({ option: foundOption, field: this.field });
-            }
-        });
+        this.myControlAuto.setAsyncValidators(this.searchValidator(this.listeData))
     }
 
     /**
@@ -175,7 +217,7 @@ export class AutoCompleteComponent<T> implements OnInit {
      * Changes the selected value and emits the event.
      * @param {display<T>} value - The display object containing the selected option.
      */
-    protected changeValue(value: display<T>) {
+    protected changeValue(value: display<T>) : void {
         this.onChangeValue.emit(value.option);
     }
     
